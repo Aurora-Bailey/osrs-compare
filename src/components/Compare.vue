@@ -34,9 +34,9 @@
     <section class="compare-charts">
       <div class="fifty-percent-line"></div>
       <div v-for="(item, i) in user_one_exp" class="outer-bar">
-        <div class="bar-exp-one">{{addCommas(user_one_exp[i])}}</div>
-        <div class="bar-exp-two">{{addCommas(user_two_exp[i])}}</div>
-        <div class="inner-bar" :style="{width: expOneToPercent(user_one_exp[i], user_two_exp[i]) + '%'}"></div>
+        <div class="bar-exp-one"><md-icon :md-src="user_one_exp[i].icon"> </md-icon><span class="exp-text">{{addCommas(user_one_exp[i].value)}}</span></div>
+        <div class="bar-exp-two"><span class="exp-text">{{addCommas(user_two_exp[i].value)}}</span><md-icon :md-src="user_one_exp[i].icon"></div>
+        <div class="inner-bar" :style="{width: expOneToPercent(user_one_exp[i].value, user_two_exp[i].value) + '%'}"></div>
       </div>
     </section>
 
@@ -67,11 +67,11 @@ export default {
           // Enter new values
           let splitNewline = data.split(/\r?\n/)
           for (let i = 0; i <= 23; i++) {
-            this.user_one_exp[i] = parseInt(splitNewline[i].split(',').pop())
+            this.user_one_exp[i].value = parseInt(splitNewline[i].split(',').pop())
           }
         } else {
           for (let i = 0; i < this.user_one_exp.length; i++) {
-            this.user_one_exp[i] = 0;
+            this.user_one_exp[i].value = 0;
           }
         }
 
@@ -84,11 +84,11 @@ export default {
           // Enter new values
           let splitNewline = data.split(/\r?\n/)
           for (let i = 0; i <= 23; i++) {
-            this.user_two_exp[i] = parseInt(splitNewline[i].split(',').pop())
+            this.user_two_exp[i].value = parseInt(splitNewline[i].split(',').pop())
           }
         } else {
           for (let i = 0; i < this.user_two_exp.length; i++) {
-            this.user_two_exp[i] = 0;
+            this.user_two_exp[i].value = 0;
           }
         }
 
@@ -112,8 +112,58 @@ export default {
       user_two: "",
       user_one_searching: false,
       user_two_searching: false,
-      user_one_exp: new Array(24+1).join('0').split('').map(parseFloat),
-      user_two_exp: new Array(24+1).join('0').split('').map(parseFloat)
+      user_one_exp: [
+        {title: 'Total EXP', value: '0', icon: '../static/icon/Skills-icon.png'},
+        {title: 'Attack', value: '0', icon: '../static/icon/Attack-icon.png'},
+        {title: 'Defence', value: '0', icon: '../static/icon/Defence-icon.png'},
+        {title: 'Strength', value: '0', icon: '../static/icon/Strength-icon.png'},
+        {title: 'Hitpoints', value: '0', icon: '../static/icon/Hitpoints-icon.png'},
+        {title: 'Ranged', value: '0', icon: '../static/icon/Ranged-icon.png'},
+        {title: 'Prayer', value: '0', icon: '../static/icon/Prayer-icon.png'},
+        {title: 'Magic', value: '0', icon: '../static/icon/Magic-icon.png'},
+        {title: 'Cooking', value: '0', icon: '../static/icon/Cooking-icon.png'},
+        {title: 'Woodcutting', value: '0', icon: '../static/icon/Woodcutting-icon.png'},
+        {title: 'Fletching', value: '0', icon: '../static/icon/Fletching-icon.png'},
+        {title: 'Fishing', value: '0', icon: '../static/icon/Fishing-icon.png'},
+        {title: 'Firemaking', value: '0', icon: '../static/icon/Firemaking-icon.png'},
+        {title: 'Crafting', value: '0', icon: '../static/icon/Crafting-icon.png'},
+        {title: 'Smithing', value: '0', icon: '../static/icon/Smithing-icon.png'},
+        {title: 'Mining', value: '0', icon: '../static/icon/Mining-icon.png'},
+        {title: 'Herblore', value: '0', icon: '../static/icon/Herblore-icon.png'},
+        {title: 'Agility', value: '0', icon: '../static/icon/Agility-icon.png'},
+        {title: 'Thieving', value: '0', icon: '../static/icon/Thieving-icon.png'},
+        {title: 'Slayer', value: '0', icon: '../static/icon/Slayer-icon.png'},
+        {title: 'Farming', value: '0', icon: '../static/icon/Farming-icon.png'},
+        {title: 'Runecrafting', value: '0', icon: '../static/icon/Runecrafting-icon.png'},
+        {title: 'Hunter', value: '0', icon: '../static/icon/Hunter-icon.png'},
+        {title: 'Construction', value: '0', icon: '../static/icon/Construction-icon.png'}
+      ],
+      user_two_exp: [
+        {title: 'Total EXP', value: '0', icon: '../static/icon/Skills-icon.png'},
+        {title: 'Attack', value: '0', icon: '../static/icon/Attack-icon.png'},
+        {title: 'Defence', value: '0', icon: '../static/icon/Defence-icon.png'},
+        {title: 'Strength', value: '0', icon: '../static/icon/Strength-icon.png'},
+        {title: 'Hitpoints', value: '0', icon: '../static/icon/Hitpoints-icon.png'},
+        {title: 'Ranged', value: '0', icon: '../static/icon/Ranged-icon.png'},
+        {title: 'Prayer', value: '0', icon: '../static/icon/Prayer-icon.png'},
+        {title: 'Magic', value: '0', icon: '../static/icon/Magic-icon.png'},
+        {title: 'Cooking', value: '0', icon: '../static/icon/Cooking-icon.png'},
+        {title: 'Woodcutting', value: '0', icon: '../static/icon/Woodcutting-icon.png'},
+        {title: 'Fletching', value: '0', icon: '../static/icon/Fletching-icon.png'},
+        {title: 'Fishing', value: '0', icon: '../static/icon/Fishing-icon.png'},
+        {title: 'Firemaking', value: '0', icon: '../static/icon/Firemaking-icon.png'},
+        {title: 'Crafting', value: '0', icon: '../static/icon/Crafting-icon.png'},
+        {title: 'Smithing', value: '0', icon: '../static/icon/Smithing-icon.png'},
+        {title: 'Mining', value: '0', icon: '../static/icon/Mining-icon.png'},
+        {title: 'Herblore', value: '0', icon: '../static/icon/Herblore-icon.png'},
+        {title: 'Agility', value: '0', icon: '../static/icon/Agility-icon.png'},
+        {title: 'Thieving', value: '0', icon: '../static/icon/Thieving-icon.png'},
+        {title: 'Slayer', value: '0', icon: '../static/icon/Slayer-icon.png'},
+        {title: 'Farming', value: '0', icon: '../static/icon/Farming-icon.png'},
+        {title: 'Runecrafting', value: '0', icon: '../static/icon/Runecrafting-icon.png'},
+        {title: 'Hunter', value: '0', icon: '../static/icon/Hunter-icon.png'},
+        {title: 'Construction', value: '0', icon: '../static/icon/Construction-icon.png'}
+      ]
     }
   }
 }
@@ -166,6 +216,11 @@ export default {
   font-weight: bold;
   color: white;
   z-index: 100;
+
+  .exp-text {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 .bar-exp-one {
   left: 0;
