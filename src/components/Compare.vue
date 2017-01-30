@@ -32,45 +32,45 @@
       </md-layout>
     </section>
 
-    <md-tabs md-centered>
-      <md-tab md-label="Default" md-icon="equalizer">
-        <section class="compare-charts">
-          <div class="fifty-percent-line"></div>
-          <div v-for="(item, i) in user_one_exp" class="outer-bar">
-            <md-ink-ripple />
-            <div class="bar-exp-one"><md-icon :md-src="stats[i].icon"> </md-icon><span class="exp-text">{{addCommas(user_one_exp[i])}}</span></div>
-            <div class="bar-exp-two"><span class="exp-text">{{addCommas(user_two_exp[i])}}</span><md-icon :md-src="stats[i].icon"></div>
-            <div class="inner-bar" :style="{width: expOneToPercent(user_one_exp[i], user_two_exp[i]) + '%'}"></div>
-          </div>
-        </section>
-      </md-tab>
+    <md-whiteframe md-elevation="4">
+      <md-tabs md-centered>
+        <md-tab md-label="Default" md-icon="equalizer">
+          <section class="compare-charts">
+            <div class="fifty-percent-line"></div>
+            <div v-for="i in order_default" class="outer-bar">
+              <md-ink-ripple />
+              <div class="bar-exp-one"><md-icon :md-src="stats[i.i].icon"> </md-icon><span class="exp-text">{{addCommas(user_one_exp[i.i])}}</span></div>
+              <div class="bar-exp-two"><span class="exp-text">{{addCommas(user_two_exp[i.i])}}</span><md-icon :md-src="stats[i.i].icon"></div>
+              <div class="inner-bar" :style="{width: expOneToPercent(user_one_exp[i.i], user_two_exp[i.i]) + '%'}"></div>
+            </div>
+          </section>
+        </md-tab>
 
-      <md-tab md-label="Experience" md-icon="star_rate">
-        <section class="compare-charts">
-          <div class="fifty-percent-line"></div>
-          <div v-for="(item, i) in user_one_exp" class="outer-bar">
-            <md-ink-ripple />
-            <div class="bar-exp-one"><md-icon :md-src="stats[i].icon"> </md-icon><span class="exp-text">{{addCommas(user_one_exp[i])}}</span></div>
-            <div class="bar-exp-two"><span class="exp-text">{{addCommas(user_two_exp[i])}}</span><md-icon :md-src="stats[i].icon"></div>
-            <div class="inner-bar" :style="{width: expOneToPercent(user_one_exp[i], user_two_exp[i]) + '%'}"></div>
-          </div>
-        </section>
-      </md-tab>
+        <md-tab md-label="Experience" md-icon="star_rate">
+          <section class="compare-charts">
+            <div class="fifty-percent-line"></div>
+            <div v-for="i in order_experience" class="outer-bar">
+              <md-ink-ripple />
+              <div class="bar-exp-one"><md-icon :md-src="stats[i.i].icon"> </md-icon><span class="exp-text">{{addCommas(user_one_exp[i.i])}}</span></div>
+              <div class="bar-exp-two"><span class="exp-text">{{addCommas(user_two_exp[i.i])}}</span><md-icon :md-src="stats[i.i].icon"></div>
+              <div class="inner-bar" :style="{width: expOneToPercent(user_one_exp[i.i], user_two_exp[i.i]) + '%'}"></div>
+            </div>
+          </section>
+        </md-tab>
 
-      <md-tab md-label="Winning" md-icon="arrow_upward">
-        <section class="compare-charts">
-          <div class="fifty-percent-line"></div>
-          <div v-for="(item, i) in user_one_exp" class="outer-bar">
-            <md-ink-ripple />
-            <div class="bar-exp-one"><md-icon :md-src="stats[i].icon"> </md-icon><span class="exp-text">{{addCommas(user_one_exp[i])}}</span></div>
-            <div class="bar-exp-two"><span class="exp-text">{{addCommas(user_two_exp[i])}}</span><md-icon :md-src="stats[i].icon"></div>
-            <div class="inner-bar" :style="{width: expOneToPercent(user_one_exp[i], user_two_exp[i]) + '%'}"></div>
-          </div>
-        </section>
-      </md-tab>
-    </md-tabs>
-
-
+        <md-tab md-label="Winning" md-icon="arrow_upward">
+          <section class="compare-charts">
+            <div class="fifty-percent-line"></div>
+            <div v-for="i in order_winning" class="outer-bar">
+              <md-ink-ripple />
+              <div class="bar-exp-one"><md-icon :md-src="stats[i.i].icon"> </md-icon><span class="exp-text">{{addCommas(user_one_exp[i.i])}}</span></div>
+              <div class="bar-exp-two"><span class="exp-text">{{addCommas(user_two_exp[i.i])}}</span><md-icon :md-src="stats[i.i].icon"></div>
+              <div class="inner-bar" :style="{width: expOneToPercent(user_one_exp[i.i], user_two_exp[i.i]) + '%'}"></div>
+            </div>
+          </section>
+        </md-tab>
+      </md-tabs>
+    </md-whiteframe>
 
     <section class="footer">
       The footer thing.
@@ -110,11 +110,38 @@ export default {
       this.user_one_searching = true
       this.getUser(this.user_one, (data) => {
         if (data) {
+          // Reset order other tabs
+          this.order_experience.sort((a, b) => {
+            if (a.i < b.i) return -1 // low to high
+            if (a.i > b.i) return 1
+            return 0
+          })
+          this.order_winning.sort((a, b) => {
+            if (a.i < b.i) return -1 // low to high
+            if (a.i > b.i) return 1
+            return 0
+          })
+
           // Enter new values
           let splitNewline = data.split(/\r?\n/)
           for (let i = 0; i <= 23; i++) {
             this.user_one_exp[i] = parseInt(splitNewline[i].split(',').pop())
+            this.order_default[i].v = i
+            this.order_experience[i].v = this.user_one_exp[i]
+            this.order_winning[i].v = this.expOneToPercent(this.user_one_exp[i], this.user_two_exp[i])
           }
+
+          // Sort other tabs
+          this.order_experience.sort((a, b) => {
+            if (a.v < b.v) return 1 // high to low
+            if (a.v > b.v) return -1
+            return 0
+          })
+          this.order_winning.sort((a, b) => {
+            if (a.v < b.v) return 1 // high to low
+            if (a.v > b.v) return -1
+            return 0
+          })
         } else {
           for (let i = 0; i < this.user_one_exp.length; i++) {
             this.user_one_exp[i] = 0;
@@ -127,11 +154,28 @@ export default {
       this.user_two_searching = true
       this.getUser(this.user_two, (data) => {
         if (data) {
+          // Reset order other tabs
+          // This is duplicated from user_one event because both users are required for winning tab
+          // The last of the two users to compute winning will be the correct one
+          this.order_winning.sort((a, b) => {
+            if (a.i < b.i) return -1 // low to high
+            if (a.i > b.i) return 1
+            return 0
+          })
+
           // Enter new values
           let splitNewline = data.split(/\r?\n/)
           for (let i = 0; i <= 23; i++) {
             this.user_two_exp[i] = parseInt(splitNewline[i].split(',').pop())
+            this.order_winning[i].v = this.expOneToPercent(this.user_one_exp[i], this.user_two_exp[i])
           }
+
+          // Sort other tabs
+          this.order_winning.sort((a, b) => {
+            if (a.v < b.v) return 1 // high to low
+            if (a.v > b.v) return -1
+            return 0
+          })
         } else {
           for (let i = 0; i < this.user_two_exp.length; i++) {
             this.user_two_exp[i] = 0;
@@ -160,6 +204,9 @@ export default {
       user_two_searching: false,
       user_one_exp: new Array(24+1).join('0').split('').map(parseFloat),
       user_two_exp: new Array(24+1).join('0').split('').map(parseFloat),
+      order_default: [{v: 0, i: 0}, {v: 0, i: 1}, {v: 0, i: 2}, {v: 0, i: 3}, {v: 0, i: 4}, {v: 0, i: 5}, {v: 0, i: 6}, {v: 0, i: 7}, {v: 0, i: 8}, {v: 0, i: 9}, {v: 0, i: 10}, {v: 0, i: 11}, {v: 0, i: 12}, {v: 0, i: 13}, {v: 0, i: 14}, {v: 0, i: 15}, {v: 0, i: 16}, {v: 0, i: 17}, {v: 0, i: 18}, {v: 0, i: 19}, {v: 0, i: 20}, {v: 0, i: 21}, {v: 0, i: 22}, {v: 0, i: 23}],
+      order_experience: [{v: 0, i: 0}, {v: 0, i: 1}, {v: 0, i: 2}, {v: 0, i: 3}, {v: 0, i: 4}, {v: 0, i: 5}, {v: 0, i: 6}, {v: 0, i: 7}, {v: 0, i: 8}, {v: 0, i: 9}, {v: 0, i: 10}, {v: 0, i: 11}, {v: 0, i: 12}, {v: 0, i: 13}, {v: 0, i: 14}, {v: 0, i: 15}, {v: 0, i: 16}, {v: 0, i: 17}, {v: 0, i: 18}, {v: 0, i: 19}, {v: 0, i: 20}, {v: 0, i: 21}, {v: 0, i: 22}, {v: 0, i: 23}],
+      order_winning: [{v: 0, i: 0}, {v: 0, i: 1}, {v: 0, i: 2}, {v: 0, i: 3}, {v: 0, i: 4}, {v: 0, i: 5}, {v: 0, i: 6}, {v: 0, i: 7}, {v: 0, i: 8}, {v: 0, i: 9}, {v: 0, i: 10}, {v: 0, i: 11}, {v: 0, i: 12}, {v: 0, i: 13}, {v: 0, i: 14}, {v: 0, i: 15}, {v: 0, i: 16}, {v: 0, i: 17}, {v: 0, i: 18}, {v: 0, i: 19}, {v: 0, i: 20}, {v: 0, i: 21}, {v: 0, i: 22}, {v: 0, i: 23}],
       stats: [
         {title: 'Total EXP', icon: '../static/icon/Skills-icon.png'},
         {title: 'Attack', icon: '../static/icon/Attack-icon.png'},
@@ -233,13 +280,13 @@ div.md-tab {
   pointer-events: none;
 }
 .outer-bar {
-  background-color: #FF7043;
+  background-color: #E91E63;
   height: 36px;
   position: relative;
   outline: 3px solid rgba(0,0,0,0.15);
 }
 .inner-bar {
-  background-color: #9575CD;
+  background-color: #2196F3;
   height: 36px;
   width: 0%;
   transition: width 2s ease;

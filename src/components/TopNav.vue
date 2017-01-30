@@ -1,8 +1,8 @@
 <template>
   <div class="top-nav">
-    <md-toolbar class="md-large">
+    <md-whiteframe md-elevation="2" class="md-toolbar md-theme-default md-large">
       <h2 id="top-nav-title" class="md-title">OSRS Compare</h2>
-    </md-toolbar>
+    </md-whiteframe>
   </div>
 </template>
 
